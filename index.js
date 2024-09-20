@@ -1,11 +1,23 @@
-require("dotenv").config();
-const cors = require('cors');
+require('dotenv').config();
+const express = require('express');
+const app = express();
+const port = 3000;
 
-// api/getFirebaseConfig.js
-module.export = function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+app.get('/api/getFirebaseConfig', (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (token == null) return res.sendStatus(401); // Unauthorized
+  
+    if (token !== AUTH_TOKEN) return res.sendStatus(403); // Forbidden
+  
+    next(); // Jika token benar, lanjut ke handler berikutnya
+  }
+
   const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -16,6 +28,10 @@ module.export = function handler(req, res) {
     appId: process.env.FIREBASE_APP_ID,
     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
   };
-  
+
   res.status(200).json(firebaseConfig);
-}
+});
+
+app.listen(port, () => {
+  console.log(`Server berjalan di http://localhost:${port}`);
+});
