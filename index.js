@@ -1,9 +1,7 @@
 require("dotenv").config();
 
-const functions = require("firebase-functions");
-
-// Endpoint untuk mengirimkan firebaseConfig
-exports.getFirebaseConfig = functions.https.onRequest((req, res) => {
+// api/getFirebaseConfig.js
+module.export = function handler(req, res) {
   const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -14,5 +12,6 @@ exports.getFirebaseConfig = functions.https.onRequest((req, res) => {
     appId: process.env.FIREBASE_APP_ID,
     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
   };
-  res.status(200).send(firebaseConfig);
-});
+  
+  res.status(200).json(firebaseConfig);
+}
